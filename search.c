@@ -7,6 +7,7 @@
 #include "makemove.h"
 #include <time.h>
 #include <limits.h>
+#include "sort.h"
 
 #define MATE_SCORE 9999
 
@@ -42,6 +43,7 @@ int alphaBeta(struct position *pos, int alpha, int beta, int depth, int ply, str
 	
 	struct move moves[2048];
 	int num_moves = genLegalMoves(pos, moves);
+	sortMoves(pos, moves, num_moves);
 	
 	for (int i = 0;i < num_moves;i++) {
 		makeMove(pos, &moves[i]);
