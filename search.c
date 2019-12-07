@@ -47,7 +47,12 @@ int alphaBeta(struct position *pos, int alpha, int beta, int depth, int ply, str
 	
 	for (int i = 0;i < num_moves;i++) {
 		makeMove(pos, &moves[i]);
-		score = -alphaBeta(pos, -beta, -alpha, depth - 1, ply + 1, pv, endtime);
+		int r = 0;
+		if (depth >= 3 && i > 25) r = 1;
+		score = -alphaBeta(pos, -beta, -alpha, depth - 1 - r, ply + 1, pv, endtime);
+		if (r > 0 && score > alpha) {
+			score = -alphaBeta(pos, -beta, -alpha, depth - 1, ply + 1, pv, endtime);
+		}
 		unmakeMove(pos);
 		if (score > bestscore) {
 			bestscore = score;
