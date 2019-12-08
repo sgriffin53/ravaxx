@@ -46,6 +46,15 @@ int alphaBeta(struct position *pos, int alpha, int beta, int depth, int ply, str
 	sortMoves(pos, moves, num_moves);
 	
 	for (int i = 0;i < num_moves;i++) {
+		
+		// futility pruning
+		
+		int material;
+		if (pos->tomove == X) material = 100 * (__builtin_popcountll(pos->Xpieces) - __builtin_popcountll(pos->Opieces));
+		else material = 100 * (__builtin_popcountll(pos->Opieces) - __builtin_popcountll(pos->Xpieces));
+		
+		if (i > 0 && depth < 3 && material + 100 < alpha) continue;
+		
 		makeMove(pos, &moves[i]);
 		int r = 0;
 		int extension = 0;
