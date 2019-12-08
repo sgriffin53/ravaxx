@@ -21,6 +21,29 @@ int taperedEval(struct position *pos) {
 		BBO &= BBO - 1;
 		eval -= PST[square] / 5;
 	}
+	
+	// mobility
+	
+	int Xmob = 0;
+	int Omob = 0;
+	BBX = pos->Xpieces;
+	while (BBX) {
+		int square = __builtin_ctzll(BBX);
+		BBX &= BBX - 1;
+		U64 BBsingles = BBsurrounding(1ULL << square) & ~pos->Opieces & ~pos->Xpieces & ONBOARD;
+		U64 BBdoubles = BBdoublesLookup[square] & ~pos->Opieces & ~pos->Xpieces;
+		Xmob += __builtin_popcountll(BBsingles | BBdoubles);
+	}
+	BBX = pos->Opieces;
+	while (BBO) {
+		int square = __builtin_ctzll(BBO);
+		BBO &= BBO - 1;
+		U64 BBsingles = BBsurrounding(1ULL << square) & ~pos->Opieces & ~pos->Xpieces & ONBOARD;
+		U64 BBdoubles = BBdoublesLookup[square] & ~pos->Opieces & ~pos->Xpieces;
+		Omob += __builtin_popcountll(BBsingles | BBdoubles);
+	}
+	eval += Xmob / 40;
+	eval -= Omob / 40;
 	if (pos->tomove == O) return -eval;
 	return eval;
 }
